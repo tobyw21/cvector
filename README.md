@@ -19,19 +19,19 @@ Vector in C++
 
     return 0;
 
-    +--------+
-    |        |
-    |  size  |
-    |        |
-    +--------+
-    |        |
-    |capacity|
-    |        |
-    +--------+ <-- Start Pointer
-    |        |
-    | data   |
-    |        |
-    +--------+
+        +--------+
+        |        |
+        |  size  |
+        |        |
+        +--------+
+        |        |
+        |capacity|
+        |        |
+        +--------+ <-- Start Pointer
+        |        |
+        | data   |
+        |        |
+        +--------+
 
 Vector implemented in C
 
