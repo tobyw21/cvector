@@ -7,7 +7,10 @@
 #include "vector.h"
 
 #define STD_VEC_SIZE 8
+#define FALSE 1
+#define TRUE 0
 
+/*Modifiers*/
 Vector ivector(Type t) {
     // initialize a vector container
     Vector v = malloc(sizeof(struct Vector));
@@ -51,6 +54,7 @@ Vector ivector(Type t) {
 
 Vector nvector(Type t, int capa_exp) {
     // initialize a vector with given capacity
+    // ie reserve()
     Vector v = malloc(sizeof(struct Vector));
 
     switch (t) {
@@ -118,6 +122,14 @@ Vector pop_back(Vector v) {
     return v;
 }
 
+Vector assign(Vector v, void *new_val, int n) {
+    assert(v != NULL);
+
+    void *offset = v->data + (n * v->elem_size);
+    offset = new_val;
+    return v;
+} 
+
 Vector vec_resize(Vector v, size_t resize) {
     if (resize < v->size) {
         fprintf(stderr, "Unable to Resize\n");
@@ -176,6 +188,45 @@ void print_vec(Vector v, int offset, Type t) {
     
 }
 
-void printsize(Vector v) {
-    printf("%d\n", v->size);
+int max_size(Vector v) {
+    return UINT_MAX / v->elem_size;
+}
+
+int capacity(Vector v) {
+    return v->capacity;
+}
+
+int size(Vector v) {
+    return v->size;
+}
+
+int empty(Vector v) {
+    return v->size == 0 ? TRUE : FALSE;
+}
+
+Vector shrink_to_fit(Vector v) {
+    v->capacity = v->size;
+
+    for (int i = v->size; i < v->capacity; i++) {
+        void *offset = v->data + (i * v->elem_size);
+        offset = NULL;
+    }
+    return v;
+}
+
+/*Element Access*/
+void *at(Vector v, int offset) {
+    return v->data + (offset * v->elem_size);
+}
+
+void *front(Vector v) {
+    return v->data;
+}
+
+void *back(Vector v) {
+    return v->data + ((v->size - 1) * v->elem_size);
+}
+
+void **data(Vector v) {
+    return v->data;
 }
