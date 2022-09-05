@@ -4,7 +4,7 @@ C++ basic vector implemented in C
 Vector in C++
 - Dynamic Array
 - Automatically arrange memory
-
+```Cpp
     vector<int> v;
 
     for (int i = 0; i < 5; i++) {
@@ -18,6 +18,7 @@ Vector in C++
     v.clear();
 
     return 0;
+```
 
         +--------+
         |        |
