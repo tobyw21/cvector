@@ -1,232 +1,144 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdbool.h>
 #include <string.h>
-#include <limits.h>
 
 #include "vector.h"
 
-#define STD_VEC_SIZE 8
-#define FALSE 1
-#define TRUE 0
 
-/*Modifiers*/
-Vector ivector(Type t) {
+
+struct Vector {
+    unsigned int size;
+    unsigned int capacity;
+    void **data;
+};
+
+
+Vector *vector() {
     // initialize a vector container
-    Vector v = malloc(sizeof(struct Vector));
+    Vector *v = malloc(sizeof(struct Vector));
 
-    switch (t) {
-        case char_:
-            v->capacity = STD_VEC_SIZE;
-            v->elem_size = sizeof(char);
-            v->size = 0;
-            v->data = malloc(sizeof(char) * v->capacity);
-            break;
-
-        case int_:
-            v->capacity = STD_VEC_SIZE;
-            v->elem_size = sizeof(int);
-            v->size = 0;
-            v->data = malloc(sizeof(int) * v->capacity);
-            break;
-
-        case float_:
-            v->capacity = STD_VEC_SIZE;
-            v->elem_size = sizeof(float);
-            v->size = 0;
-            v->data = malloc(sizeof(float) * v->capacity);
-            break;
-
-        case double_:
-            v->capacity = STD_VEC_SIZE;
-            v->elem_size = sizeof(double);
-            v->size = 0;
-            v->data = malloc(sizeof(double) * v->capacity);
-            break;
-
-        default:
-            fprintf(stderr, "No data type specified\n");
-            return NULL;
-    }
-
-    return v;
-}
-
-Vector nvector(Type t, int capa_exp) {
-    // initialize a vector with given capacity
-    // ie reserve()
-    Vector v = malloc(sizeof(struct Vector));
-
-    switch (t) {
-        case char_:
-            v->capacity = capa_exp;
-            v->elem_size = sizeof(char);
-            v->size = 0;
-            v->data = malloc(sizeof(char) * v->capacity);
-            break;
-
-        case int_:
-            v->capacity = capa_exp;
-            v->elem_size = sizeof(int);
-            v->size = 0;
-            v->data = malloc(sizeof(int) * v->capacity);
-            break;
-
-        case float_:
-            v->capacity = capa_exp;
-            v->elem_size = sizeof(float);
-            v->size = 0;
-            v->data = malloc(sizeof(float) * v->capacity);
-            break;
-
-        case double_:
-            v->capacity = capa_exp;
-            v->elem_size = sizeof(double);
-            v->size = 0;
-            v->data = malloc(sizeof(double) * v->capacity);
-            break;
-
-        default:
-            fprintf(stderr, "No data type specified\n");
-            return NULL;
-    }
+    v->capacity = INIT_VEC_SIZE;
+    v->size = 0;
+    v->data = malloc(sizeof(void *) * INIT_VEC_SIZE);
 
     return v;
 }
 
 
-Vector push_back(Vector v, void *elem) {
+void push_back(Vector *v, void *elem) {
     // add element to end of the vector
     assert(v != NULL);
     assert(elem != NULL);
 
-    if (v->size > v->capacity) {
-        v->data = realloc(v->data, v->size * v->elem_size);
+    if (v->size == v->capacity) {
+        v->data = realloc(v->data, v->capacity + 5);
+        v->capacity += 5;
     }
-
-    void *offset = v->data + (v->size * v->elem_size);
-    memcpy(offset, elem, v->elem_size);
+    
+    v->data[v->size] = elem;
     v->size++;
-
-    return v;
 }
 
-Vector pop_back(Vector v) {
+void *pop_back(Vector *v) {
     // delete last element in vector
     assert(v != NULL);
     
-    void *offset = v->data + ((v->size - 1) * v->elem_size);
-    offset = NULL;
-    v->size--;
+    if (v->size > 0) {
+        v->size--;
+        void *value = v->data[v->size]; 
+        return value;
 
-    return v;
+    }
+    return NULL;
 }
 
-Vector assign(Vector v, void *new_val, int n) {
+void assign(Vector *v, void *new, const unsigned int pos) {
     assert(v != NULL);
 
-    void *offset = v->data + (n * v->elem_size);
-    offset = new_val;
-    return v;
+    if (pos > v->size) {
+        fprintf(stderr, "position overflow.\n");
+        return;
+    }
+    int actual_pos = pos - 1;
+    v->data[actual_pos] = new;
 } 
 
-Vector vec_resize(Vector v, size_t resize) {
+void resize(Vector *v, size_t resize) {
     if (resize < v->size) {
-        fprintf(stderr, "Unable to Resize\n");
-        return NULL;
+        fprintf(stderr, "can't shrink vector.\n");
+        return;
     }
 
-    void *old = v->data;
     v->data = realloc(v->data, resize);
-    memcpy(v->data, old, v->elem_size);
+
     v->size = resize;
     if (resize > v->capacity) {
         v->capacity = resize;
     }
 
-    return v;
 }
 
-void clean(Vector v) {
+
+void *at(Vector *v, const unsigned int pos) {
+    assert(v != NULL);
+
+    if (pos > v->size) {
+        fprintf(stderr, "position overflow.\n");
+        return NULL;
+    }
+    int actual_pos = pos - 1;
+    return v->data[actual_pos];
+}
+
+
+
+
+void vremove(Vector *v, const unsigned int pos) {
+    assert(v != NULL);
+
+    if (pos >= v->size) {
+        fprintf(stderr, "position overflow.\n");
+        return;
+    }
+
+    void **old = v->data;
+    
+    
+    int actual_pos = pos - 1;
+    
+    if (pos == 1) {
+        v->data[actual_pos] = NULL;
+        v->size--;
+    } else if (pos < v->size) {
+        v->data[actual_pos] = NULL;
+    
+        memcpy(v->data[actual_pos], v->data[pos], v->size - actual_pos);
+        v->size--;
+
+    } else {
+        v->data[actual_pos] = NULL;
+        v->size--;
+    }
+}
+
+void clean(Vector *v) {
     free(v->data);
     v->capacity = 0;
-    v->elem_size = 0;
     v->size = 0;
     free(v);
 }
 
-void print_vec(Vector v, int offset, Type t) {
 
-    if (offset < v->size) {
-        void *val = v->data + (offset * v->elem_size);
-        
-        switch (t) {
-            case int_:
-                printf("vector<int> [%d] = %d\n", offset, *((int *)val));
-                break;
-
-            case char_:
-                printf("vector<char> [%d] = %c\n", offset, *((char *)val));
-                break;
-
-            case double_:
-                printf("vector<double> [%d] = %lf\n", offset, *((double *)val));
-                break;
-
-            case float_:
-                printf("vector<float> [%d] = %f\n", offset, *((float *)val));
-                break;
-
-            default:
-                fprintf(stderr, "Invalid Vector Type\n");
-        }
-
-    } else {
-        printf("Offset [%d] Exceed Vector Size Range\n", offset);
-        
-    }
-    
-}
-
-int max_size(Vector v) {
-    return UINT_MAX / v->elem_size;
-}
-
-int capacity(Vector v) {
+int capacity(Vector *v) {
     return v->capacity;
 }
 
-int size(Vector v) {
+int size(Vector *v) {
     return v->size;
 }
 
-int empty(Vector v) {
-    return v->size == 0 ? TRUE : FALSE;
-}
-
-Vector shrink_to_fit(Vector v) {
-    v->capacity = v->size;
-
-    for (int i = v->size; i < v->capacity; i++) {
-        void *offset = v->data + (i * v->elem_size);
-        offset = NULL;
-    }
-    return v;
-}
-
-/*Element Access*/
-void *at(Vector v, int offset) {
-    return v->data + (offset * v->elem_size);
-}
-
-void *front(Vector v) {
-    return v->data;
-}
-
-void *back(Vector v) {
-    return v->data + ((v->size - 1) * v->elem_size);
-}
-
-void **data(Vector v) {
-    return v->data;
+int empty(Vector *v) {
+    return v->size == 0 ? true : false;
 }
