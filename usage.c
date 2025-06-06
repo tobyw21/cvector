@@ -40,7 +40,7 @@ int main(void) {
     push_back(v, &p1);
     push_back(v, &p2);
     
-    void *r5, *r6;
+    void *r5, *r6, *r7;
     r5 = at(v, 1);
     printf("p1 name=%s, age=%d\n", deref(r5, Person));
     
@@ -52,6 +52,15 @@ int main(void) {
     assign(v, &p3, 2);
     r6 = at(v, 2);
     printf("p2 name=%s, age=%d\n", deref(r6, Person));
+
+    push_back(v, &p2);
+    printf("%d\n", size(v));
+    vremove(v, 2);
+
+    printf("%d\n", size(v));
+
+    r7 = at(v, 2);
+    printf("p2 name=%s, age=%d\n", deref(r7, Person));
     
     clean(v);
     return 0;

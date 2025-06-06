@@ -22,6 +22,7 @@ void assign(Vector *v, void *new, const unsigned int pos);
 void resize(Vector *v, size_t resize);
 
 void *at(Vector *v, const unsigned int pos);
+void vremove(Vector *v, const unsigned int pos);
 
 // because C doesn't have destructor so have to free the container after use
 void clean(Vector *v);

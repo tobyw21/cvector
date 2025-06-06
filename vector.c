@@ -93,8 +93,6 @@ void *at(Vector *v, const unsigned int pos) {
 }
 
 
-
-
 void vremove(Vector *v, const unsigned int pos) {
     assert(v != NULL);
 
@@ -102,19 +100,17 @@ void vremove(Vector *v, const unsigned int pos) {
         fprintf(stderr, "position overflow.\n");
         return;
     }
-
-    void **old = v->data;
-    
     
     int actual_pos = pos - 1;
     
     if (pos == 1) {
         v->data[actual_pos] = NULL;
         v->size--;
+        memmove(&v->data[0], &v->data[1], v->size * sizeof(void *));
     } else if (pos < v->size) {
         v->data[actual_pos] = NULL;
     
-        memcpy(v->data[actual_pos], v->data[pos], v->size - actual_pos);
+        memmove(&v->data[actual_pos], &v->data[pos], (v->size - pos) * sizeof(void *));
         v->size--;
 
     } else {
