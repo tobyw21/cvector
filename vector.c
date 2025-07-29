@@ -34,7 +34,8 @@ Vector *vector(size_t typesize)
     return v;
 }
 
-void impl(Vector *v, void (*clone)(void *dest, void *src), void (*drop)(void *elem)) {
+void impl(Vector *v, void (*clone)(void *dest, void *src), void (*drop)(void *elem))
+{
     // impl clone, drop for vector
     v->clone = clone;
     v->drop = drop;
@@ -88,8 +89,8 @@ void assign(Vector *v, void *new, const unsigned int pos)
         return;
     }
 
-
-    if (v->data[pos] == NULL) {
+    if (v->data[pos] == NULL)
+    {
         fprintf(stderr, "assign to uninitialised position.\n");
         return;
     }
@@ -126,7 +127,7 @@ void *at(Vector *v, const unsigned int pos)
     return v->data[pos];
 }
 
-void vremove(Vector *v, const unsigned int pos)
+void delete(Vector *v, const unsigned int pos)
 {
     assert(v != NULL);
 
@@ -136,9 +137,12 @@ void vremove(Vector *v, const unsigned int pos)
         return;
     }
 
-    if (v->drop) {
+    if (v->drop)
+    {
         v->drop(v->data[pos]);
-    } else {
+    }
+    else
+    {
         free(v->data[pos]);
     }
 
@@ -151,12 +155,15 @@ void vremove(Vector *v, const unsigned int pos)
 
 void clean(Vector *v)
 {
-    for (int i = 0; i < v->size; i++) {
-        if (v->drop) {
+    for (int i = 0; i < v->size; i++)
+    {
+        if (v->drop)
+        {
             v->drop(v->data[i]);
-        } else {
+        }
+        else
+        {
             free(v->data[i]);
-
         }
     }
     free(v->data);
