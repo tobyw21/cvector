@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Werror -Wunused -g
+CFLAGS = -Werror -g -std=c11
 
 usage: usage.c vector.c
 	$(CC) $(CFLAGS) $^ -o $@

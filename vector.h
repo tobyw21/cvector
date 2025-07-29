@@ -7,8 +7,8 @@ typedef struct Vector Vector;
 
 
 // initialize a vector container
-Vector *vector();
-
+Vector *vector(size_t typesize);
+void impl(Vector *v, void (*clone)(void *dest, void *src), void (*drop)(void *elem));
  // add element to end of the vector
 void push_back(Vector *v, void *elem);
 
